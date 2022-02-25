@@ -12,10 +12,10 @@ const userSchema = new Schema(
       type: String,
       required: true,
       unique: true,
-      validate: {
-        validator: () => Promise.resolve(false),
-        message: "Email validation failed",
-      },
+      match: [
+        /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
+        "Please fill a valid email address",
+      ],
     },
     thoughts: [
       {
