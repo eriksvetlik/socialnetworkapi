@@ -1,4 +1,4 @@
-const User = require('../models/User');
+const User = require("../models/User");
 
 module.exports = {
   getUsers(req, res) {
@@ -8,19 +8,41 @@ module.exports = {
   },
   getSingleUser(req, res) {
     User.findOne({ _id: req.params.userId })
-      .select('-__v')
-      .populate('posts')
+      .populate("thoughts")
+      .populate("friends")
       .then((user) =>
         !user
-          ? res.status(404).json({ message: 'No user with that ID' })
+          ? res.status(404).json({ message: "No user with that ID" })
           : res.json(user)
       )
       .catch((err) => res.status(500).json(err));
   },
-  // create a new user
   createUser(req, res) {
     User.create(req.body)
       .then((dbUserData) => res.json(dbUserData))
       .catch((err) => res.status(500).json(err));
+  },
+  deleteUser(req, res) {
+    User.findOneAndRemove({ _id: req.params.userId })
+      .then((user) =>
+        !user
+          ? res.status(404).json({ message: "No such user exists" })
+          : Thoughts.findOneAndUpdate(
+              { username: req.params.username },
+              { $pull: { username: req.params.username } },
+              { new: true }
+            )
+      )
+      .then((thoughts) =>
+        !thoughts
+          ? res.status(404).json({
+              message: "User deleted, but no thoughts found",
+            })
+          : res.json({ message: "User successfully deleted" })
+      )
+      .catch((err) => {
+        console.log(err);
+        res.status(500).json(err);
+      });
   },
 };
