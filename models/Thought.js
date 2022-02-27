@@ -55,14 +55,17 @@ const thoughtSchema = new Schema(
   }
 );
 
+// format createdAt Date
 reactionSchema.virtual("formattedDate").get(function () {
   return moment(this.createdAt).format("D MMMM YYYY | h:mm:ss A");
 });
 
+// get a count of all reactions for a thought
 thoughtSchema.virtual("reactionCount").get(function () {
   return this.reactions.length;
 });
 
+// format createdAt Date
 thoughtSchema.virtual("formattedDate").get(function () {
   return moment(this.createdAt).format("D MMMM YYYY | h:mm:ss A");
 });
